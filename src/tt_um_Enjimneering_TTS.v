@@ -249,6 +249,11 @@ module tt_um_enjimneering_tts_top (
         .movement_counter(movement_delay_counter)// Counter for delaying dragon's movement otherwise sticks to player
     );
 
+    reg ShDC_Delay;
+    reg SwDc_Delay;
+    always@(posedge clk) if(rst_n) ShDC_Delay <= SheepDragonCollision; else ShDC_Delay <= 0;
+    always@(posedge  clk) if(rst_n) SwDc_Delay <= SwordDragonCollision; else SwDc_Delay <= 0;
+    
     wire [9:0]   Dragon_1 ;
     wire [9:0]   Dragon_2 ;
     wire [9:0]   Dragon_3 ;
@@ -257,11 +262,6 @@ module tt_um_enjimneering_tts_top (
     wire [9:0]   Dragon_6 ;
     wire [9:0]   Dragon_7 ;
 
-    reg ShDC_Delay;
-    reg SwDc_Delay;
-    always@(posedge clk) if(rst_n) ShDC_Delay <= SheepDragonCollision; else ShDC_Delay <= 0;
-    always@(posedge  clk) if(rst_n) SwDc_Delay <= SwordDragonCollision; else SwDc_Delay <= 0;
-    
     DragonBody dragonBody(
 
         .clk( clk),
@@ -295,7 +295,7 @@ module tt_um_enjimneering_tts_top (
       .clk(clk),
       .reset(~rst_n),
       .trigger(~rst_n | SheepDragonCollision),
-      .seed({timer[5:0],player_pos[7:2]}^dragon_1), // Seed input for initializing randomness
+      .seed({timer[5:0],player_pos[7:2]}^Dragon_1), // Seed input for initializing randomness
       .ready(),
       .rdm_num(sheep_pos)
      );
@@ -418,15 +418,15 @@ module tt_um_enjimneering_tts_top (
         .saw_trigger(trig_eat),
         .noise_trigger(trig_die),
         .square_trigger(trig_hit),
-        .x(x),
-        .y(y),
+        .x(pix_x),
+        .y(pix_y),
         .sound(sound)
     );
 
     // TODO: check these
 
     // System IO Connections
-    assign NES_Data = ui_in[0];
+    assign nes_data = ui_in[0];
     assign uio_oe   = 8'b1000_0110;
     assign uio_out  = {sound, 4'b0000, nes_latch, nes_clk, 1'b0};
     assign uo_out   = {hsync, B[0], G[0], R[0], vsync, B[1], G[1], R[1]};

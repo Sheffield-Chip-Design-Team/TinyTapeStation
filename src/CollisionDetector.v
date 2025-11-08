@@ -1,13 +1,14 @@
 // Collision Detection Unit 
 // Author: James Ashie Kotey
 
-// Last Updated: 31/01/2025 @ 16:23:52
+// Last Updated: 16:21 08/11/2025 
 
 module CollisionDetector (
     input wire        clk,
     input wire        reset,
     input wire [7:0]  playerPos,
     input wire [7:0]  swordPos,
+    input wire        attack_enable,
     input wire [7:0]  sheepPos,
     input wire [55:0] dragonSegmentPositions,
     input wire [6:0]  activeDragonSegments,
@@ -19,10 +20,14 @@ module CollisionDetector (
     reg       checksegment;
     reg [2:0] segmentCounter = 0;
     reg [7:0] dragonSegment;
+    
 
     wire PlayerDragonCollisionFlag;
     wire SwordDragonCollisionFlag;
     wire SheepDragonCollisionFlag;
+   
+   // add check for player vs sword location
+   reg player_attacking;
     
     // make comparison with current dragon segment to determine if there is a collision.
 
@@ -47,12 +52,15 @@ module CollisionDetector (
     always@(posedge clk) begin
 
         if (!reset) begin
+        
+         player_attacking <= swordPos != 8'b0000_0000;
+        
             
             //check that current dragon segement is active
             checksegment <= ((7'b000_0001 << segmentCounter) & activeDragonSegments) != 0;
 
             playerDragonCollision <= playerDragonCollision | PlayerDragonCollisionFlag;
-            swordDragonCollision  <= swordDragonCollision  | SwordDragonCollisionFlag;
+            swordDragonCollision  <= swordDragonCollision  | SwordDragonCollisionFlag & player_attacking;
             sheepDragonCollision  <= sheepDragonCollision  | SheepDragonCollisionFlag;
 
             case(segmentCounter) // check against each active dragon segment.
@@ -113,7 +121,6 @@ module CollisionDetector (
         end
 
     end
-
 endmodule
 
 module Comparator (

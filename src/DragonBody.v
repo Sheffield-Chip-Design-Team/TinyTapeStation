@@ -9,11 +9,13 @@
 */
 
 module DragonBody(
+
     input clk,
     input reset,
     input vsync,
     input heal,                         // grow
     input hit,                          // shrink
+    input [31:0] current_time,
     input [5:0] movementCounter,
     input [9:0] Dragon_Head,            // [9:8] orientation, [7:0]  position
 
@@ -28,15 +30,20 @@ module DragonBody(
     output reg [6:0] Display_en
 );
 
-    localparam MOVE = 2'b00; // do nothing
-    localparam IDLE = 2'b11; // do nothing
-    localparam HEAL = 2'b01; // grow
-    localparam HIT = 2'b10;  // shrink
-
     reg pre_vsync;
 
+    reg heal_reg, hit_reg;
+    wire heal_pause,hit_pause;
+    always @(posedge clk) heal_reg <= heal;
+    always @(posedge clk) hit_reg <= hit;
+
+    assign heal_pause = heal & !heal_reg;
+    assign hit_pause = hit & !hit_reg;
+
+    reg [31:0] time_1;
+
+
     always @(posedge clk)begin
-        
         if (~reset) begin
         
             pre_vsync <= vsync;
@@ -53,32 +60,35 @@ module DragonBody(
                     Dragon_7 <= Dragon_6;
                 end
 
-        end end else begin
-            Dragon_1 <= 0;
-            Dragon_2 <= 0;
-            Dragon_3 <= 0;
-            Dragon_4 <= 0;
-            Dragon_5 <= 0;
-            Dragon_6 <= 0;
-            Dragon_7 <= 0;
+            end 
+        end else begin
+            Dragon_1 <= {2'b00,8'hFB};
+            Dragon_2 <= {2'b00,8'hFB};
+            Dragon_3 <= {2'b00,8'hFB};
+            Dragon_4 <= {2'b00,8'hFB};
+            Dragon_5 <= {2'b00,8'hFB};
+            Dragon_6 <= {2'b00,8'hFB};
+            Dragon_7 <= {2'b00,8'hFB};
         end
     end
 
+    wire [31:0] interval = current_time - time_1;
+    wire colddown = interval > 32'h01000000;
+
     always @( posedge clk )begin
-        
         if(~reset) begin
             case(1'b1) 
-                heal: begin
+                heal_pause&(Dragon_1[7:0]!=8'hFB): begin
                     Display_en <= (Display_en << 1) | 7'b0000001;
                 end
-                hit: begin
+                hit_pause&(Dragon_1[7:0]!=8'hFB)&colddown: begin
                     Display_en <= Display_en >> 1;
+                    time_1 <= current_time;
                 end
                 default: Display_en <= Display_en;
             endcase
         end else begin
-            Display_en <= 7'b0000001;
+            Display_en <= 7'b0000111;
         end
     end
-
-    endmodule
+endmodule

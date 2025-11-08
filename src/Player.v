@@ -1,4 +1,8 @@
+// Module: Player Logic
+// Author: Anubhav Avinash, James Ashie Kotey, Bowen Shi, Kwashie Andoh
+
 module PlayerLogic (
+
     input            clk,
     input            reset,
     input wire       trigger,
@@ -15,13 +19,13 @@ module PlayerLogic (
 );
 
   // State definitions
-  localparam IDLE_STATE = 2'b00;               // Wait for input and stay idle
-  localparam ATTACK_STATE = 2'b01;             // Sword appears where the player is facing
-  localparam MOVE_STATE = 2'b10;               // Player Moving
+  localparam IDLE_STATE = 2'b00;  // Move when there is input from the controller
+  localparam ATTACK_STATE = 2'b01;  // Sword appears where the player is facing
+  localparam MOVE_STATE = 2'b10;  // Wait for input and stay idle
   localparam ATTACK_DURATION = 6'b000_100;
 
   reg [5:0] player_anim_counter;
-  reg [5:0] sword_duration;  // how long the sword stays visible - (DETERMINED BY ATTACK DURATION)
+  reg [5:0] sword_duration;  // how long the sword stays visible - (SET BY ATTACK DURATION)
 
   // player state register
   reg [1:0] current_state;
@@ -241,4 +245,78 @@ module PlayerLogic (
       direction_stored <= 0;
     end
   end
+endmodule
+
+
+module DragonTarget(
+      input wire clk,
+      input wire reset,
+      input wire trigger,
+      input wire dragon_hurt,
+      input wire target_reached_player,
+      input wire target_reached_sheep,
+      input wire [6:0] dragon_state,
+      input wire [7:0] dragon_pos,
+      input wire [7:0] player_pos, 
+      input wire [7:0] sheep_pos,
+      input wire rnd_timer,
+      output wire [7:0] target_pos
+);
+    
+    reg [7:0] target_pos_reg;
+    reg [2:0] DragonBehaviourState=0;
+    reg [2:0] NextDragonBehaviourState=2;
+    reg dragon_ready;
+
+    always @(posedge clk) begin
+    
+          if (~reset) begin
+             dragon_ready <= dragon_ready | &dragon_state[2:0] ;
+          if (trigger) begin
+              DragonBehaviourState <= NextDragonBehaviourState;
+          end
+    
+          end else begin
+            DragonBehaviourState <= 2;
+            dragon_ready<=0;
+          end
+    end
+
+    wire [7:0] inverse_sheep = {~sheep_pos[7:4], 4'b1100-sheep_pos[3:0]};
+
+    always @(posedge clk) begin
+
+         if (~reset) begin
+             
+              case (DragonBehaviourState)
+        
+                2: begin //chase the player
+                  target_pos_reg <= player_pos;
+                  if (dragon_hurt | target_reached_player)  NextDragonBehaviourState <= rnd_timer; 
+                end
+        
+                0: begin // chase the sheep
+                  target_pos_reg <= sheep_pos;
+                  if (dragon_hurt | target_reached_sheep) NextDragonBehaviourState <= 1;
+                end
+        
+                1: begin // retreat to a corner (use two of the bits of the rng?
+                   target_pos_reg <= inverse_sheep;
+                   if (dragon_pos == inverse_sheep) NextDragonBehaviourState <= 2; // randomize target
+               end
+        
+                default : begin 
+                  target_pos_reg <= target_pos_reg;
+                end
+            endcase
+              
+              end else begin   
+                NextDragonBehaviourState <= 2;
+                target_pos_reg <= 0;
+              end
+      
+
+     end
+   assign target_pos = target_pos_reg;
+   
 endmodule

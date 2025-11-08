@@ -1,6 +1,6 @@
 // Module: Picture Processing Unit 
 // Author: Bowen Shi
-// Last Updated: 14:14 08/11/2025 
+// Last Updated: 16:03 08/11/2025 
 
 // `include SpriteROM.v
 
@@ -24,21 +24,20 @@ module PictureProcessingUnit(
     input clk_in,
     input reset,    
     input wire [17:0] entity_1,  
-    input wire [17:0] entity_2,  
-    input wire [17:0] entity_3,  
+    input wire [17:0] entity_2,  //Simultaneously supports up to 9 objects in the scene.
+    input wire [17:0] entity_3,  //Set the entity ID to 4'hf for unused channels.
     input wire [17:0] entity_4,
     input wire [17:0] entity_5,
     input wire [17:0] entity_6,
     input wire [17:0] entity_7, 
     input wire [17:0] entity_8,
-    
-    input wire [17:0] dragon_1,
-    input wire [17:0] dragon_2,
-    input wire [17:0] dragon_3,
-    input wire [17:0] dragon_4,
-    input wire [17:0] dragon_5,
-    input wire [17:0] dragon_6,
-    input wire [17:0] dragon_7,
+    input wire [17:0] entity_9,
+    input wire [17:0] entity_10,
+    input wire [17:0] entity_11,
+    input wire [17:0] entity_12,
+    input wire [17:0] entity_13,
+    input wire [17:0] entity_14,
+    input wire [17:0] entity_15,
 
     input wire [9:0] counter_V,
     input wire [9:0] counter_H,
@@ -74,27 +73,26 @@ module PictureProcessingUnit(
         if(!reset)begin
             
             previous_horizontal_pixel <= counter_H; // record previous x-pixel
-
+           
             if (previous_horizontal_pixel != counter_H ) begin
-
-                if(upscale_Counter_H != 4)begin
+                if (upscale_Counter_H != 4) begin
                     upscale_Counter_H <= upscale_Counter_H + 1;
                 end else begin
                     upscale_Counter_H <= 0;
                     column_Counter <= column_Counter + 1;
-                end 
+            end 
                                 
-                if (counter_H >= 40) begin
-                    if(column_Counter == 3'b111 && upscale_Counter_H == 4)begin
-                        horizontal_Tile_Counter <= horizontal_Tile_Counter + 1; // increment horizontal tile 
-                    end else begin
-                        horizontal_Tile_Counter <= horizontal_Tile_Counter;
-                    end
-                    end else begin
-                        horizontal_Tile_Counter <= 0;
-                    end
-
+            if (counter_H >= 40) begin
+                if (column_Counter == 3'b111 && upscale_Counter_H == 4)begin
+                    horizontal_Tile_Counter <= horizontal_Tile_Counter + 1; // increment horizontal tile 
+                end else begin
+                    horizontal_Tile_Counter <= horizontal_Tile_Counter;
+                end
             end else begin
+                horizontal_Tile_Counter <= 0; // reset horizontal tile counter
+            end
+
+            end else begin // keep counters the same
                 horizontal_Tile_Counter <= horizontal_Tile_Counter;
                 upscale_Counter_H <= upscale_Counter_H;
                 column_Counter <= column_Counter;
@@ -103,6 +101,7 @@ module PictureProcessingUnit(
             previous_vertical_pixel <= counter_V;  // record previous y-pixel
 
             if (previous_vertical_pixel != counter_V ) begin    // if pixel counter has incremented
+                
                 if(upscale_Counter_V != 4) begin                // Upscale every pixel 5x
                     upscale_Counter_V <= upscale_Counter_V + 1;
                 end else begin
@@ -110,30 +109,31 @@ module PictureProcessingUnit(
                     row_Counter <= row_Counter + 1;
                 end
 
-            if (counter_V >= 40) begin // increment the horizontal pixel after 8 upscaled pixels have been drawn in the vertical direction.
-                if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter != 4'd11)begin // row 0-11
-                    vertical_Tile_Counter <= vertical_Tile_Counter + 1; // increment vertical tile 
-                end else if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter == 4'd11) begin // final row of tiles
+                if (counter_V >= 40) begin // increment the horizontal pixel after 8 upscaled pixels have been drawn in the vertical direction.
+                    if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter != 4'd11)begin // row 0-11
+                        vertical_Tile_Counter <= vertical_Tile_Counter + 1; // increment vertical tile 
+                    end else if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter == 4'd11) begin // final row of tiles
+                        vertical_Tile_Counter <= 0;
+                    end else begin
+                        vertical_Tile_Counter <= vertical_Tile_Counter;
+                    end          
+                end else begin
                     vertical_Tile_Counter <= 0;
-                end else begin
-                    vertical_Tile_Counter <= vertical_Tile_Counter;
-                end 
-                end else begin
-                     vertical_Tile_Counter <= 0;
                 end
-            end else begin // if the row counter hasn't updated
+                    
+            end else begin // keep counters the same
                     vertical_Tile_Counter <= vertical_Tile_Counter;
                     upscale_Counter_V <= upscale_Counter_V;
                     row_Counter <= row_Counter;
             end
 
-        end else begin // reset all counters on reset
-
+        end else begin // reset all counters 
+            // horizontal
             previous_horizontal_pixel <= 0;
             column_Counter <= 0; 
             upscale_Counter_H <= 0;
             horizontal_Tile_Counter <= 4'b0000;
-
+            //vertical
             previous_vertical_pixel <= 0;
             row_Counter <= 0;
             upscale_Counter_V <= 0;
@@ -146,21 +146,23 @@ module PictureProcessingUnit(
     always@(posedge clk) begin  
         
         if (!reset) begin
-            
-            local_Counter_H <= horizontal_Tile_Counter + 1;       // works as the width of the screen is 16 tiles - uses the overflow of 4-bit counrter as the reset.
 
-            if(row_Counter == 3'b111 && upscale_Counter_H == 4 && horizontal_Tile_Counter == 15 && column_Counter == 7 && upscale_Counter_H == 4) begin // if at the end of a row
-                if(vertical_Tile_Counter != 4'b1011) begin        // if not on final tile in the column
-                    local_Counter_V <= vertical_Tile_Counter + 1; // increment the vertical tile counter
+            local_Counter_H <= horizontal_Tile_Counter + 1;        // works as the width of the screen is 16 tiles - uses the overflow of 4-bit counrter as the reset.
+
+            if (row_Counter == 3'b111 && upscale_Counter_H == 4 && horizontal_Tile_Counter == 15 && column_Counter == 7 && upscale_Counter_H == 4) begin // if at the end of a row
+                if (vertical_Tile_Counter != 4'b1011) begin        // if not on final tile in the column
+                    local_Counter_V <= vertical_Tile_Counter + 1;  // increment the vertical tile counter
                 end else begin
-                    local_Counter_V <= 0;                         // wrap round back to the top of the screen 
+                    local_Counter_V <= 0;                          // wrap round back to the top of the screen 
                 end
+
             end else begin
                 local_Counter_V <= vertical_Tile_Counter;
             end
+
         end 
 
-        else begin 
+        else begin  // reset condition
             local_Counter_H <= 0;
             local_Counter_V <= 0;
         end
@@ -173,13 +175,15 @@ module PictureProcessingUnit(
     wire new_tile = next_tile != current_tile;
 
     // Cycling through the entity slots - loading the data into the general entity register 
+    
+    // TODO: Check the order of the enitity assignments
     always@(posedge clk) begin 
         
         if (!reset) begin
-            case (entity_Counter)
+             case (entity_Counter)
                 4'd0: begin 
                     general_Entity <= entity_8; 
-                    end
+                end
                 4'd1:begin
                     general_Entity <= entity_7;
                 end   
@@ -202,25 +206,25 @@ module PictureProcessingUnit(
                     general_Entity <= entity_1;
                 end
                 4'd8: begin
-                    general_Entity <= dragon_1;
+                    general_Entity <= entity_9;
                 end
                 4'd9: begin
-                    general_Entity <= dragon_2;
+                    general_Entity <= entity_10;
                 end
                 4'd10: begin
-                    general_Entity <= dragon_3;
+                    general_Entity <= entity_11;
                 end
                 4'd11: begin
-                    general_Entity <= dragon_4;
+                    general_Entity <= entity_12;
                 end
                 4'd12: begin
-                    general_Entity <= dragon_5;
+                    general_Entity <= entity_13;
                 end
                 4'd13: begin
-                    general_Entity <= dragon_6;
+                    general_Entity <= entity_14;
                 end
                 4'd14: begin
-                    general_Entity <= dragon_7;
+                    general_Entity <= entity_15;
                 end
 
                 default: begin
@@ -253,9 +257,8 @@ module PictureProcessingUnit(
 
     // Determine whether the difference between the entity pos and the current block pos is less than the required display length.
     assign range_H = (general_Entity[11:8] - local_Counter_H) < {1'b0,general_Entity[2:0]}; 
-    assign range_V = (local_Counter_V - general_Entity[7:4]) == 4'b0000;
+    assign range_V = (local_Counter_V - general_Entity[7:4]) == 1'b0;
     assign inRange = range_H && range_V;
-
 
     //These registers are used to address the ROM.
     reg [8:0] detector;    // Data Format: [8:6] Row number, [5:2] Entity ID, [1:0] Orientation  
@@ -270,15 +273,13 @@ module PictureProcessingUnit(
             if (!(column_Counter == 7 && upscale_Counter_H == 3))begin
 
                 out_entity <= out_entity;
-                
+        
                 if (inRange && (general_Entity[17:14] != 4'b1111)) begin
-
                     if (general_Entity[3] == 1'b1) begin
                         detector <= {~(row_Counter), general_Entity[17:12]};
                     end else begin
                         detector <= {(row_Counter), general_Entity[17:12]};
                     end
-
                 end else begin
                     detector <= detector;
                 end
@@ -308,13 +309,13 @@ module PictureProcessingUnit(
     );
 
     // Send the appropriate pixel value to the VGA output unit 
-    always@(posedge clk)begin     
+    always@(posedge clk)begin 
+       
         if(!reset)begin
             colour <= buffer[column_Counter];
         end else begin
             colour <= 1'b1;
         end
+        
     end
-
 endmodule
-
