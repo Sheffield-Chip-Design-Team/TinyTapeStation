@@ -80,7 +80,8 @@ module AudioProcessingUnit (
 
   // envelopes and timer
   wire [11:0] timer = frame_counter;
-  reg noise_reg, noise_src = ^lfsr;
+  reg noise_reg;
+  wire noise_src = ^lfsr;
   reg  [2:0] noise_counter;
   
   wire [4:0] envelopeA = 5'd31 - timer[4:0];   // exp(t*-10) decays to 0 approximately in 32 frames  [255 215 181 153 129 109  92  77  65  55  46  39  33  28  23  20  16  14 12  10   8   7   6   5   4   3   3   2   2]
