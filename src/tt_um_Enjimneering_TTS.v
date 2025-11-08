@@ -39,8 +39,9 @@ module tt_um_enjimneering_tts_top (
 
     // Interface signals between input modules
     wire nes_data = ui_in[0];
-    wire nes_clk = uio_out[1];
-    wire nes_latch = uio_out[2];
+    // both are assigned on line 432
+    wire nes_clk;
+    wire nes_latch;
     
     wire snes_pmod_data = ui_in[1];
     wire snes_pmod_clk = ui_in[2];
@@ -64,7 +65,7 @@ module tt_um_enjimneering_tts_top (
 
     NESTest_Top nes_snes_module (
         // system
-        . clk(clk), // System clock from TinyQV (64MHz)
+        .system_clk_25MHz(clk),
         .rst_n(rst_n),         // active low reset
 
         // NES controller interface [GPIO]. We generate latch and clock internally and send to controller. Data returns.
@@ -100,8 +101,8 @@ module tt_um_enjimneering_tts_top (
     // input signals
     wire [9:0] input_data; // register to hold the 5 possible player actions
    
-    wire released_buttons = input_data[4:0];
-    wire pressed_buttons  = input_data[9:5];
+    wire [4:0] released_buttons = input_data[4:0];
+    wire [4:0] pressed_buttons  = input_data[9:5];
 
     //timing signals
     wire pixel_value;
@@ -402,7 +403,7 @@ module tt_um_enjimneering_tts_top (
     APU_trigger apu_trig (
         .clk(clk),
         .reset(~rst_n),
-        .frame_end((x == 0) & (y == 0)),     // TODO: use frame end signal here
+        .frame_end((pix_x == 0) & (pix_y == 0)),     // TODO: use frame end signal here
         .SheepDragonCollision(SheepDragonCollision),    
         .SwordDragonCollision(SwordDragonCollision),
         .PlayerDragonCollision(PlayerDragonCollision),
