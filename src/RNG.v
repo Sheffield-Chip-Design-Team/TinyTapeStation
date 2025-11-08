@@ -41,7 +41,6 @@ module rng ( // random nuumber generator based on linear feedback + seed
         rand_buf2  <= 8'b1111_1101;
         trigger_reg <= 0;
         ready_reg  <= 0;
-        seed_reg <=0;
       end
       else begin  
         trigger_reg <= trigger;
