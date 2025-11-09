@@ -38,7 +38,7 @@ module tt_um_enjimneering_tts_top (
 );
 
     // Interface signals between input modules
-    wire nes_data = ui_in[0];
+    wire nes_data;
     // both are assigned on line 432
     wire nes_clk;
     wire nes_latch;
@@ -432,9 +432,9 @@ module tt_um_enjimneering_tts_top (
     // TODO: check these
 
     // System IO Connections
-    assign nes_data = ui_in[0];
+    assign nes_data = 1'b0;
     assign uio_oe   = 8'b1000_0110;
-    assign uio_out  = {sound, 4'b0000, nes_latch, nes_clk, 1'b0};
+    assign uio_out  = {sound, 4'b0000, 2'b00, 1'b0};
     assign uo_out   = {hsync, B[0], G[0], R[0], vsync, B[1], G[1], R[1]};
     
     // housekeeping to prevent errors/ warnings in synthesis.
