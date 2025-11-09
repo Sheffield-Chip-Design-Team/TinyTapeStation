@@ -35,20 +35,20 @@ module APU_trigger (
   // detect the rising edge of the trigger signals
   always @ (posedge clk) begin
     if (!test_mode) begin
-      if (SheepDragonCollision & ~trigger_buf[0])  
+      if (SheepDragonCollision & ~trigger_buf[0]) begin
         eat_sound <= 1'b1;
-      else if(frame_delay[1])
-        eat_sound <= 1'b0;
+      end else if(frame_delay[1]) begin
+        eat_sound <= 1'b0; end
 
-      if (SwordDragonCollision & ~trigger_buf[1])  
+      if (SwordDragonCollision & ~trigger_buf[1])  begin
         die_sound <= 1'b1;
-      else if(frame_delay[1])
-        die_sound <= 1'b0;
+      end else if(frame_delay[1])begin
+        die_sound <= 1'b0;end
 
-      if (PlayerDragonCollision & ~trigger_buf[2])  
+      if (PlayerDragonCollision & ~trigger_buf[2])  begin
         hit_sound <= 1'b1;
-      else if(frame_delay[1] & ~PlayerDragonCollision) //player dragon collision logic issue, continue activated during collision
-        hit_sound <= 1'b0;
+      end else if(frame_delay[1] & ~PlayerDragonCollision)begin //player dragon collision logic issue, continue activated during collision
+        hit_sound <= 1'b0;end
     end else begin
       eat_sound <= SheepDragonCollision;
       die_sound <= PlayerDragonCollision;

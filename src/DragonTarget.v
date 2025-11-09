@@ -45,7 +45,7 @@ module DragonTarget(
         
                 2: begin //chase the player
                   target_pos_reg <= player_pos;
-                  if (dragon_hurt | target_reached_player)  NextDragonBehaviourState <= rnd_timer; 
+                  if (dragon_hurt | target_reached_player)  NextDragonBehaviourState <= {2'b00, rnd_timer}; 
                 end
         
                 0: begin // chase the sheep

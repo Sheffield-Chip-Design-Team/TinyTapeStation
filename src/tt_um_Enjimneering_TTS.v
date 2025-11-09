@@ -301,8 +301,7 @@ module tt_um_enjimneering_tts_top (
       .clk(clk),
       .reset(~rst_n|~auto_rst_n),
       .trigger(~rst_n | SheepDragonCollision |~auto_rst_n),
-      .seed({timer[5:0],player_pos[7:2]}^Dragon_1), // Seed input for initializing randomness
-      .ready(),
+      .seed({timer[2:0],player_pos[6:2]}^Dragon_1[7:0]), // Seed input for initializing randomness
       .rdm_num(sheep_pos)
      );
 
@@ -348,8 +347,7 @@ module tt_um_enjimneering_tts_top (
         .display_on(video_active),
         .screen_hpos(pix_x),
         .screen_vpos(pix_y),
-        .frame_end(frame_end),
-        .input_enable()
+        .frame_end(frame_end)
     );
 
     // outpout colour signals
