@@ -1,0 +1,29 @@
+rm -f receiver_tb_results.xml
+"/Library/Developer/CommandLineTools/usr/bin/make" -f Makefile receiver_tb_results.xml
+mkdir -p sim_build/rtl
+/opt/homebrew/bin/iverilog -o sim_build/rtl/sim.vvp -s receiver_tb -g2012 -I/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src -f sim_build/rtl/cmds.f -f sim_build/rtl/cmds.f  /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/APU.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/APUTrigger.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/CollisionDetector.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonBody.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonHead.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonTarget.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Heart.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/InputCollector.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/NESTest_Top.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Oscillator.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/PPU.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Player.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/RNG.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/SpriteROM.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Sync.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/tt_um_Enjimneering_TTS.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/receiver/tb/receiver_wtb.v
+rm -f receiver_tb_results.xml
+COCOTB_TEST_MODULES=test_receiver COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=receiver_tb TOPLEVEL_LANG=verilog \
+         /opt/homebrew/bin/vvp -M /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build/rtl/sim.vvp  -none 
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.13.7 interpreter at /Users/kwashieandoh/ttsetup/venv/bin/python3.13
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1762714308
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.0 from /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_receiver.test_receiver_sanity (1/1)
+     0.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/receiver/tb/test_receiver.py:16: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          clock = Clock(uut.clk, 40, units="ns")
+     0.00ns INFO     cocotb.receiver_tb                 Resetting Module
+  4400.00ns INFO     cocotb.receiver_tb                 Test Complete!
+  4400.00ns INFO     cocotb.regression                  test_receiver.test_receiver_sanity passed
+  4400.00ns INFO     cocotb.regression                  ********************************************************************************************
+                                                        ** TEST                                STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ********************************************************************************************
+                                                        ** test_receiver.test_receiver_sanity   PASS        4400.00           0.00    1348453.72  **
+                                                        ********************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                     4400.00           0.00    1261444.81  **
+                                                        ********************************************************************************************
+VCD info: dumping is suppressed.
+[CLEANUP] Cleaning up...
+[INFO] Cleanup complete!
