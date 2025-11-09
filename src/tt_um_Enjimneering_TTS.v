@@ -110,6 +110,7 @@ module tt_um_enjimneering_tts_top (
 
     reg player_trigger;
     reg collector_trigger;
+    wire frame_end_b = collector_trigger;
 
     // Global Timer
     reg [31:0] timer;
@@ -233,7 +234,7 @@ module tt_um_enjimneering_tts_top (
     DragonTarget dragonBrain(
         .clk( clk),
         .reset(~rst_n|~auto_rst_n),
-        .trigger(frame_end),
+        .trigger(frame_end_b),
         .target_reached_player(PlayerDragonCollision),
         .target_reached_sheep(SheepDragonCollision),
         .dragon_pos(dragon_position),
