@@ -12,6 +12,7 @@ module APU_trigger (
 );
 
   reg [2:0] trigger_buf;
+  reg [1:0] frame_delay;
 
   // buffer the trigger signals 
   always @ (posedge clk) begin
@@ -22,6 +23,11 @@ module APU_trigger (
         trigger_buf[0] <= SheepDragonCollision;
         trigger_buf[1] <= SwordDragonCollision;
         trigger_buf[2] <= PlayerDragonCollision;
+        if (frame_delay[1])
+          frame_delay <= 2'b00;
+        else
+          frame_delay[0] <= frame_end;
+          frame_delay[1] <= frame_delay[0]; //keep sound active two frame, avoid collison happens near the frame end
       // end
     end
   end
@@ -31,17 +37,17 @@ module APU_trigger (
     if (!test_mode) begin
       if (SheepDragonCollision & ~trigger_buf[0])  
         eat_sound <= 1'b1;
-      else 
+      else if(frame_delay[1])
         eat_sound <= 1'b0;
 
       if (SwordDragonCollision & ~trigger_buf[1])  
         die_sound <= 1'b1;
-      else 
+      else if(frame_delay[1])
         die_sound <= 1'b0;
 
       if (PlayerDragonCollision & ~trigger_buf[2])  
         hit_sound <= 1'b1;
-      else 
+      else if(frame_delay[1] & ~PlayerDragonCollision) //player dragon collision logic issue, continue activated during collision
         hit_sound <= 1'b0;
     end else begin
       eat_sound <= SheepDragonCollision;

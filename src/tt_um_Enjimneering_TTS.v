@@ -34,7 +34,7 @@ module tt_um_enjimneering_tts_top (
     output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
     input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
-    input  wire       rst_n    // reset_n - low to reset   
+    input  wire       rst_n     // reset_n - low to reset   
 );
 
     // Interface signals between input modules
@@ -403,11 +403,11 @@ module tt_um_enjimneering_tts_top (
     APU_trigger apu_trig (
         .clk(clk),
         .reset(~rst_n),
-        .frame_end((pix_x == 0) & (pix_y == 0)),     // TODO: use frame end signal here
+        .frame_end(frame_end),     // TODO: use frame end signal here
         .SheepDragonCollision(SheepDragonCollision),    
         .SwordDragonCollision(SwordDragonCollision),
         .PlayerDragonCollision(PlayerDragonCollision),
-        .test_mode(ui_in[3]),
+        .test_mode(1'b0),
         .eat_sound(trig_eat),
         .die_sound(trig_die),
         .hit_sound(trig_hit)
