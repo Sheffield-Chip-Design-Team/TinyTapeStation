@@ -5,10 +5,10 @@ project:
   discord:      "CaptainMcNugget"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "The Tiny Tapestation is SHARC most ambition project to date .. TODO"                   # One line description of what your project does
   language:     "Verilog"             # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     25                     # Clock frequency in Hz (or 0 if not applicable)
+  clock_hz:     25000000                     # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "2x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+  tiles: "1x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_enjimneering_tts_top"
@@ -66,6 +66,5 @@ pinout:
   uio[5]: ""
   uio[6]: ""
   uio[7]: "SOUND_OUT"
-  uio[7]: ""
 # Do not change!
 yaml_version: 6
