@@ -2,21 +2,21 @@
 // Module : Input Collector
 // Author: James Ashie Kotey
 /* 
-    Last Updated: 16:21 16/06/2025 
+    Last Updated: 11:13 09/11/2025 
     
     Description:
         takes input signals from the controller/simulators and outputs 1 on each button state when a button has been pressed or released.
 
     Control State Structure:
-                0: UP 
-                1: DOWN
-                2: LEFT
-                3: RIGHT
-                4: ACTION
+        0: UP 
+        1: DOWN
+        2: LEFT
+        3: RIGHT
+        4: ACTION
 
 */
 
-module InputController (
+module InputCollector (
     input wire clk,
     input wire reset,
     input wire up,            

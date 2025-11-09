@@ -10,7 +10,7 @@
  // Tiny Tapestation Top Module
 
 //  === SIMULATION BUILD DEPENDENCIES ===
-//   `include "ControlInterface.v"
+//   `include "InputCollector.v"
 //   `include "CollisionDetector.v"
 //   `include "Heart.v"
 //   `include "Player.v"
@@ -121,7 +121,7 @@ module tt_um_enjimneering_tts_top (
        collector_trigger <= player_trigger;
      end
 
-    InputController ic(
+    InputCollector ic(
         .clk( clk),
         .reset(collector_trigger),
         .up(up_out),  
