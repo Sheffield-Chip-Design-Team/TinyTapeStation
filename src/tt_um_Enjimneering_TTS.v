@@ -43,9 +43,9 @@ module tt_um_enjimneering_tts_top (
     wire nes_clk;
     wire nes_latch;
     
-    wire snes_pmod_data = ui_in[1];
-    wire snes_pmod_clk = ui_in[2];
-    wire snes_pmod_latch = ui_in[3];
+    wire snes_pmod_data = ui_in[6];
+    wire snes_pmod_clk = ui_in[5];
+    wire snes_pmod_latch = ui_in[4];
 
     // Output signals from nesReciver
     wire A_out;
