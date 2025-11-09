@@ -1,0 +1,51 @@
+name: Update File Metadata
+
+on:
+  workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository Content
+        uses: actions/checkout@v4  # Checkout the repository content to github runner.\
+        with:
+          fetch-depth: 2 # Fetch at least two commits to access HEAD~
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com" 
+      
+      - name: Setup Python Version
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9.13 # Install the python version needed
+
+      - name: Install Python Dependencies
+        run: python -m pip install --upgrade pip requests
+        
+      - name: Get Updated Files
+        id: get-update
+        run: |
+          FILES=$(git diff-tree --no-commit-id --name-only -r HEAD | tr '\n' ' ')
+          echo "Changed files: $FILES"
+          echo "FILES=$FILES" >> $GITHUB_ENV
+
+      - name: Execute Auto-Update Python Script
+        run: |
+            python .github/workflows/scripts/updatefileinfo.py ${FILES}
+        
+
+      - name: Stage, Commit and Push 
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add $FILES
+          git commit -m "[Automation] Updated File Metadata."
+          git push origin main

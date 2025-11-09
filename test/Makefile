@@ -6,7 +6,9 @@ SIM ?= icarus
 WAVES ?= 1
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = project.v
+PROJECT_SOURCES = tt_um_Enjimneering_TTS.v APU.v APUTrigger.v CollisionDetector.v ControlInterface.v \
+                  DragonBody.v DragonHead.v DragonTarget.v Heart.v InputController.v NESTest_Top.v \
+                  Oscillator.v Player.v PPU.v RNG.v SpriteROM.v Sync.v
 
 ifneq ($(GATES),yes)
 
