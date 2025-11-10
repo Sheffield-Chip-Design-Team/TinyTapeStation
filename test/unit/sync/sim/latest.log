@@ -1,0 +1,64 @@
+rm -f sync_tb_results.xml
+"/Library/Developer/CommandLineTools/usr/bin/make" -f Makefile sync_tb_results.xml
+mkdir -p sim_build/rtl
+/opt/homebrew/bin/iverilog -o sim_build/rtl/sim.vvp -s sync_tb -g2012 -I/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src -f sim_build/rtl/cmds.f -f sim_build/rtl/cmds.f  /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/APU.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/APUTrigger.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/CollisionDetector.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonBody.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonHead.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonTarget.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Heart.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/InputCollector.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/NESTest_Top.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Oscillator.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/PPU.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Player.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/RNG.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/SpriteROM.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Sync.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/tt_um_Enjimneering_TTS.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/sync/tb/sync_wtb.v    
+rm -f sync_tb_results.xml
+COCOTB_TEST_MODULES=test_sync COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=sync_tb TOPLEVEL_LANG=verilog \
+         /opt/homebrew/bin/vvp -M /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build/rtl/sim.vvp  -none 
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.13.7 interpreter at /Users/kwashieandoh/ttsetup/venv/bin/python3.13
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1762714309
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.0 from /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_sync.test_reset (1/3)
+     0.00ns INFO     cocotb.sync_tb                     Starting Sync Generator Reset Test
+     0.00ns INFO     cocotb.sync_tb                     Starting clock with period 40 ns
+     0.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/sync/tb/test_sync.py:52: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          clock = Clock(uut.clk, period_ns, units="ns")
+     0.00ns INFO     cocotb.sync_tb                     clock already running! with period 40 ns
+     0.00ns INFO     cocotb.sync_tb                     Resetting Module
+    40.00ns INFO     cocotb.sync_tb                     Module Reset Complete
+   120.00ns INFO     cocotb.sync_tb                     Reset Condition Test Passed!
+   120.00ns INFO     cocotb.regression                  test_sync.test_reset passed
+   120.00ns INFO     cocotb.regression                  running test_sync.test_vertical_counter_random (2/3)
+                                                            Constrained random test for the vertical pixel counter (pix_y).
+   120.00ns INFO     cocotb.sync_tb                     Starting Constrained Random Pixel Y Counter Test
+   120.00ns INFO     cocotb.sync_tb                     Starting clock with period 40 ns
+   120.00ns INFO     cocotb.sync_tb                     clock already running! with period 40 ns
+   120.00ns INFO     cocotb.sync_tb                     Resetting Module
+   160.00ns INFO     cocotb.sync_tb                     Module Reset Complete
+   160.00ns INFO     cocotb.sync_tb                     Waiting for 28088 clock cycles before checking pix_y
+1123680.00ns INFO     cocotb.sync_tb                     Pixel X value after 28088 cycles: 35
+1123680.00ns INFO     cocotb.sync_tb                     Constrained Random Pixel X Counter Test Passed!
+1123680.00ns INFO     cocotb.regression                  test_sync.test_vertical_counter_random passed
+1123680.00ns INFO     cocotb.regression                  running test_sync.test_hsync_random (3/3)
+                                                             Constrained random test for hsync signal timing.
+1123680.00ns INFO     cocotb.sync_tb                     Starting Constrained Random HSync Test
+1123680.00ns INFO     cocotb.sync_tb                     Starting clock with period 40 ns
+1123680.00ns INFO     cocotb.sync_tb                     clock already running! with period 40 ns
+1123680.00ns INFO     cocotb.sync_tb                     Resetting Module
+1123720.00ns INFO     cocotb.sync_tb                     Module Reset Complete
+1123720.00ns INFO     cocotb.sync_tb                     Waiting for 1587 clock cycles before checking hsync
+1187200.00ns INFO     cocotb.sync_tb                     HSync value after 1587 cycles: 0, hpos: 786
+1187200.00ns INFO     cocotb.sync_tb                     Constrained Random HSync Test Passed!
+1187200.00ns INFO     cocotb.regression                  test_sync.test_hsync_random passed
+1187200.00ns INFO     cocotb.regression                  ************************************************************************************************
+                                                         ** TEST                                    STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                         ************************************************************************************************
+                                                         ** test_sync.test_reset                     PASS         120.00           0.00     193881.54  **
+                                                         ** test_sync.test_vertical_counter_random   PASS     1123560.00           0.65    1728939.17  **
+                                                         ** test_sync.test_hsync_random              PASS       63520.00           0.04    1662520.22  **
+                                                         ************************************************************************************************
+                                                         ** TESTS=3 PASS=3 FAIL=0 SKIP=0                      1187200.00           0.69    1720978.59  **
+                                                         ************************************************************************************************
+VCD info: dumping is suppressed.
+[CLEANUP] Cleaning up...
+[INFO] Deleting __pycache__
+[INFO] Removed __pycache__ directory.
+[INFO] Deleting existing sim_build in sim
+[INFO] Deleted sim_build in sim.
+[INFO] Moving new sim_build to sim
+[INFO] Moved sim_build to sim.
+[INFO] Moving simulation outputs to sim...
+[CLEANUP] Cleanup complete!

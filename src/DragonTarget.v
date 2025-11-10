@@ -19,19 +19,19 @@ module DragonTarget(
     reg [7:0] target_pos_reg;
     reg [2:0] DragonBehaviourState=0;
     reg [2:0] NextDragonBehaviourState=2;
-    reg dragon_ready;
+
 
     always @(posedge clk) begin
     
           if (~reset) begin
-             dragon_ready <= dragon_ready | &dragon_state[2:0] ;
-          if (trigger) begin
-              DragonBehaviourState <= NextDragonBehaviourState;
-          end
+
+            if (trigger) begin
+                DragonBehaviourState <= NextDragonBehaviourState;
+            end
     
           end else begin
             DragonBehaviourState <= 2;
-            dragon_ready<=0;
+
           end
     end
 
@@ -45,7 +45,7 @@ module DragonTarget(
         
                 2: begin //chase the player
                   target_pos_reg <= player_pos;
-                  if (dragon_hurt | target_reached_player)  NextDragonBehaviourState <= rnd_timer; 
+                  if (dragon_hurt | target_reached_player)  NextDragonBehaviourState <= {2'b00, rnd_timer}; 
                 end
         
                 0: begin // chase the sheep

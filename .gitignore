@@ -11,3 +11,9 @@ test/results.xml
 test/gate_level_netlist.v
 gds_render_preview.*
 gds_render.*
+venv
+/.devcontainer
+.devcontainer/copy_tt_support_tools.sh
+/pdk
+/tt
+/.devcontainer

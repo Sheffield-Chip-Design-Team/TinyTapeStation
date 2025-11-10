@@ -1,0 +1,33 @@
+rm -f /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/top//../results.xml
+"/Library/Developer/CommandLineTools/usr/bin/make" -f Makefile /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/top//../results.xml
+mkdir -p sim_build/gl
+/opt/homebrew/bin/iverilog -o sim_build/gl/sim.vvp -s top_tb -g2012 -DGL_TEST -DFUNCTIONAL -DUSE_POWER_PINS -DSIM -DUNIT_DELAY=#1 -f sim_build/gl/cmds.f -f sim_build/gl/cmds.f  /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/gate_level_netlist.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/top/tb/top_wtb.v /Users/kwashieandoh/ttsetup/pdk/ciel/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_fd_sc_hd/verilog/primitives.v /Users/kwashieandoh/ttsetup/pdk/ciel/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v
+Command File: Warning: default timescale is being set multiple times.
+                     : using the last valid +timescale found.
+/Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb_tools/makefiles/simulators/Makefile.icarus:65: Using MODULE is deprecated, please use COCOTB_TEST_MODULES instead.
+rm -f /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/top//../results.xml
+COCOTB_TEST_MODULES=test_top COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=top_tb TOPLEVEL_LANG=verilog \
+         /opt/homebrew/bin/vvp -M /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build/gl/sim.vvp  -none 
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.13.7 interpreter at /Users/kwashieandoh/ttsetup/venv/bin/python3.13
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1762715034
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.0 from /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_top.test_tts_sanity (1/1)
+     0.00ns INFO     cocotb.top_tb                      Start
+     0.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/top/tb/test_top.py:13: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          clock = Clock(dut.clk, 10, units="us")
+     0.00ns INFO     cocotb.top_tb                      Reset
+ 90000.00ns INFO     cocotb.top_tb                      Test project behavior
+100000.00ns INFO     cocotb.regression                  test_top.test_tts_sanity passed
+100000.00ns INFO     cocotb.regression                  **************************************************************************************
+                                                        ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        **************************************************************************************
+                                                        ** test_top.test_tts_sanity       PASS      100000.00           0.00   33330451.37  **
+                                                        **************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0             100000.00           0.00   30795183.55  **
+                                                        **************************************************************************************
+VCD info: dumping is suppressed.
+[CLEANUP] Cleaning up...
+[INFO] Cleanup complete!

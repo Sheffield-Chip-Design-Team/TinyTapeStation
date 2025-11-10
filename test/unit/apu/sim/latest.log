@@ -1,0 +1,128 @@
+rm -f apu_tb_results.xml
+"/Library/Developer/CommandLineTools/usr/bin/make" -f Makefile apu_tb_results.xml
+mkdir -p sim_build/rtl
+/opt/homebrew/bin/iverilog -o sim_build/rtl/sim.vvp -s apu_tb -g2012 -I/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src -f sim_build/rtl/cmds.f -f sim_build/rtl/cmds.f  /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/APU.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/APUTrigger.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/CollisionDetector.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonBody.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonHead.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/DragonTarget.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Heart.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/InputCollector.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/NESTest_Top.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Oscillator.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/PPU.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Player.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/RNG.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/SpriteROM.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/Sync.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/../src/tt_um_Enjimneering_TTS.v /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/apu_wtb.v
+rm -f apu_tb_results.xml
+COCOTB_TEST_MODULES=test_apu COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=apu_tb TOPLEVEL_LANG=verilog \
+         /opt/homebrew/bin/vvp -M /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build/rtl/sim.vvp  -none 
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.13.7 interpreter at /Users/kwashieandoh/ttsetup/venv/bin/python3.13
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1762714305
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.0 from /Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_apu.test_reset_behavior (1/7)
+                                                            Check that after reset the sound output is 0
+     0.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py:18: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+     0.00ns INFO     cocotb.apu_tb                      Resetting Module
+    70.00ns WARNING  ..set_behavior.test_reset_behavior Sound should be 0 right after reset
+                                                        assert Logic('X') == 0
+                                                         +  where Logic('X') = LogicObject(apu_tb.sound).value
+                                                         +    where LogicObject(apu_tb.sound) = HierarchyObject(apu_tb).sound
+                                                        Traceback (most recent call last):
+                                                          File "/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py", line 22, in test_reset_behavior
+                                                            assert dut.sound.value == 0, "Sound should be 0 right after reset"
+                                                        AssertionError: Sound should be 0 right after reset
+                                                        assert Logic('X') == 0
+                                                         +  where Logic('X') = LogicObject(apu_tb.sound).value
+                                                         +    where LogicObject(apu_tb.sound) = HierarchyObject(apu_tb).sound
+    70.00ns WARNING  cocotb.regression                  test_apu.test_reset_behavior failed
+    70.00ns INFO     cocotb.regression                  running test_apu.test_no_collision_silence (2/7)
+                                                            Ensure no sound is produced if no collisions occur
+    70.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py:28: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    70.00ns INFO     cocotb.apu_tb                      Resetting Module
+   130.00ns WARNING  ..ilence.test_no_collision_silence apu_tb contains no child object named SheepDragonCollision
+                                                        Traceback (most recent call last):
+                                                          File "/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py", line 31, in test_no_collision_silence
+                                                            dut.SheepDragonCollision.value = 0
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+                                                          File "/Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/handle.py", line 484, in __getattr__
+                                                            raise AttributeError(f"{self._path} contains no child object named {name}")
+                                                        AttributeError: apu_tb contains no child object named SheepDragonCollision
+   130.00ns WARNING  cocotb.regression                  test_apu.test_no_collision_silence failed
+   130.00ns INFO     cocotb.regression                  running test_apu.test_sheep_collision_duration (3/7)
+                                                            Sheep collision should produce sustained sound
+   130.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py:49: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+   130.00ns INFO     cocotb.apu_tb                      Resetting Module
+   190.00ns WARNING  ..on.test_sheep_collision_duration apu_tb contains no child object named SheepDragonCollision
+                                                        Traceback (most recent call last):
+                                                          File "/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py", line 52, in test_sheep_collision_duration
+                                                            dut.SheepDragonCollision.value = 1
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+                                                          File "/Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/handle.py", line 484, in __getattr__
+                                                            raise AttributeError(f"{self._path} contains no child object named {name}")
+                                                        AttributeError: apu_tb contains no child object named SheepDragonCollision
+   190.00ns WARNING  cocotb.regression                  test_apu.test_sheep_collision_duration failed
+   190.00ns INFO     cocotb.regression                  running test_apu.test_sheep_collision_cooldown (4/7)
+                                                            Verify cooldown prevents retrigger of sheep SFX before cooldown expires
+   190.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py:67: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+   190.00ns INFO     cocotb.apu_tb                      Resetting Module
+   250.00ns WARNING  ..wn.test_sheep_collision_cooldown apu_tb contains no child object named SheepDragonCollision
+                                                        Traceback (most recent call last):
+                                                          File "/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py", line 71, in test_sheep_collision_cooldown
+                                                            dut.SheepDragonCollision.value = 1
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+                                                          File "/Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/handle.py", line 484, in __getattr__
+                                                            raise AttributeError(f"{self._path} contains no child object named {name}")
+                                                        AttributeError: apu_tb contains no child object named SheepDragonCollision
+   250.00ns WARNING  cocotb.regression                  test_apu.test_sheep_collision_cooldown failed
+   250.00ns INFO     cocotb.regression                  running test_apu.test_sword_collision_cooldown (5/7)
+                                                            Verify cooldown prevents retrigger of sword SFX before cooldown expires
+   250.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py:96: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+   250.00ns INFO     cocotb.apu_tb                      Resetting Module
+   310.00ns WARNING  ..wn.test_sword_collision_cooldown apu_tb contains no child object named SwordDragonCollision
+                                                        Traceback (most recent call last):
+                                                          File "/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py", line 100, in test_sword_collision_cooldown
+                                                            dut.SwordDragonCollision.value = 1
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+                                                          File "/Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/handle.py", line 484, in __getattr__
+                                                            raise AttributeError(f"{self._path} contains no child object named {name}")
+                                                        AttributeError: apu_tb contains no child object named SwordDragonCollision
+   310.00ns WARNING  cocotb.regression                  test_apu.test_sword_collision_cooldown failed
+   310.00ns INFO     cocotb.regression                  running test_apu.test_player_collision_cooldown (6/7)
+                                                            Verify cooldown prevents retrigger of player SFX before cooldown expires
+   310.00ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py:125: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+   310.00ns INFO     cocotb.apu_tb                      Resetting Module
+   370.00ns WARNING  ..n.test_player_collision_cooldown apu_tb contains no child object named PlayerDragonCollision
+                                                        Traceback (most recent call last):
+                                                          File "/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py", line 129, in test_player_collision_cooldown
+                                                            dut.PlayerDragonCollision.value = 1
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                          File "/Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/handle.py", line 484, in __getattr__
+                                                            raise AttributeError(f"{self._path} contains no child object named {name}")
+                                                        AttributeError: apu_tb contains no child object named PlayerDragonCollision
+   370.00ns WARNING  cocotb.regression                  test_apu.test_player_collision_cooldown failed
+   370.00ns INFO     cocotb.regression                  running test_apu.test_all_triggers_overlap (7/7)
+                                                            Trigger all three collisions simultaneously and check sound output
+   370.01ns WARNING  py.warnings                        /Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py:153: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+   370.01ns INFO     cocotb.apu_tb                      Resetting Module
+   430.01ns WARNING  ..verlap.test_all_triggers_overlap apu_tb contains no child object named SheepDragonCollision
+                                                        Traceback (most recent call last):
+                                                          File "/Users/kwashieandoh/Documents/GitHub/TinyTapeStation/test/unit/apu/tb/test_apu.py", line 157, in test_all_triggers_overlap
+                                                            dut.SheepDragonCollision.value = 1
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^
+                                                          File "/Users/kwashieandoh/ttsetup/venv/lib/python3.13/site-packages/cocotb/handle.py", line 484, in __getattr__
+                                                            raise AttributeError(f"{self._path} contains no child object named {name}")
+                                                        AttributeError: apu_tb contains no child object named SheepDragonCollision
+   430.01ns WARNING  cocotb.regression                  test_apu.test_all_triggers_overlap failed
+   430.01ns INFO     cocotb.regression                  *************************************************************************************************
+                                                        ** TEST                                     STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        *************************************************************************************************
+                                                        ** test_apu.test_reset_behavior              FAIL          70.00           0.00      60548.83  **
+                                                        ** test_apu.test_no_collision_silence        FAIL          60.00           0.00      38580.14  **
+                                                        ** test_apu.test_sheep_collision_duration    FAIL          60.00           0.00     133011.75  **
+                                                        ** test_apu.test_sheep_collision_cooldown    FAIL          60.00           0.00     141064.04  **
+                                                        ** test_apu.test_sword_collision_cooldown    FAIL          60.00           0.00     146312.93  **
+                                                        ** test_apu.test_player_collision_cooldown   FAIL          60.00           0.00     121515.33  **
+                                                        ** test_apu.test_all_triggers_overlap        FAIL          60.00           0.00     143640.55  **
+                                                        *************************************************************************************************
+                                                        ** TESTS=7 PASS=0 FAIL=7 SKIP=0                           430.01           0.01      66135.30  **
+                                                        *************************************************************************************************
+VCD info: dumping is suppressed.

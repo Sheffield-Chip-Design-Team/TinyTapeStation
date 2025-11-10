@@ -34,7 +34,7 @@ module tt_um_enjimneering_tts_top (
     output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
     input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
-    input  wire       rst_n    // reset_n - low to reset   
+    input  wire       rst_n     // reset_n - low to reset   
 );
 
     // Interface signals between input modules
@@ -43,9 +43,9 @@ module tt_um_enjimneering_tts_top (
     wire nes_clk;
     wire nes_latch;
     
-    wire snes_pmod_data = ui_in[1];
-    wire snes_pmod_clk = ui_in[2];
-    wire snes_pmod_latch = ui_in[3];
+    wire snes_pmod_data = ui_in[6];
+    wire snes_pmod_clk = ui_in[5];
+    wire snes_pmod_latch = ui_in[4];
 
     // Output signals from nesReciver
     wire A_out;
@@ -66,7 +66,7 @@ module tt_um_enjimneering_tts_top (
     NESTest_Top nes_snes_module (
         // system
         .system_clk_25MHz(clk),
-        .rst_n(rst_n),         // active low reset
+        .rst_n(rst_n|auto_rst_n),         // active low reset
 
         // NES controller interface [GPIO]. We generate latch and clock internally and send to controller. Data returns.
         .NES_Data(nes_data), // NES controller data -> ui_in[0]
@@ -110,6 +110,7 @@ module tt_um_enjimneering_tts_top (
 
     reg player_trigger;
     reg collector_trigger;
+    wire frame_end_b = collector_trigger;
 
     // Global Timer
     reg [31:0] timer;
@@ -170,6 +171,11 @@ module tt_um_enjimneering_tts_top (
     
     wire [7:0] sheep_pos;
     
+    reg auto_rst_n;
+    always @(posedge clk) begin
+        auto_rst_n <= playerLives != 2'b00;
+    end
+    
     CollisionDetector collisionDetector (
         .clk( clk),
         .reset(vsync),
@@ -198,7 +204,7 @@ module tt_um_enjimneering_tts_top (
     ) hearts (
         .clk( clk),
         .vsync(vsync),
-        .reset(~rst_n),
+        .reset(~rst_n|~auto_rst_n),
         .PlayerDragonCollision(PlayerDragonCollision),
         .PlayerHurt(playerHurt),
         .playerLives(playerLives)
@@ -206,7 +212,7 @@ module tt_um_enjimneering_tts_top (
 
     PlayerLogic playlogic(
         .clk( clk),
-        .reset(~rst_n | playerHurt),
+        .reset(~rst_n | playerHurt | ~auto_rst_n),
         .input_data(input_data),
         .trigger(player_trigger),
         // .attack_enable(attack_enable),
@@ -227,8 +233,8 @@ module tt_um_enjimneering_tts_top (
     
     DragonTarget dragonBrain(
         .clk( clk),
-        .reset(~rst_n),
-        .trigger(frame_end),
+        .reset(~rst_n|~auto_rst_n),
+        .trigger(frame_end_b),
         .target_reached_player(PlayerDragonCollision),
         .target_reached_sheep(SheepDragonCollision),
         .dragon_pos(dragon_position),
@@ -242,7 +248,7 @@ module tt_um_enjimneering_tts_top (
     
     DragonHead dragonHead( 
         .clk( clk),
-        .reset(~rst_n),
+        .reset(~rst_n|~auto_rst_n),
         .targetPos(target_pos),
         .vsync(vsync),
         .dragon_direction(dragon_direction),
@@ -252,8 +258,8 @@ module tt_um_enjimneering_tts_top (
 
     reg ShDC_Delay;
     reg SwDc_Delay;
-    always@(posedge clk) if(rst_n) ShDC_Delay <= SheepDragonCollision; else ShDC_Delay <= 0;
-    always@(posedge  clk) if(rst_n) SwDc_Delay <= SwordDragonCollision; else SwDc_Delay <= 0;
+    always@(posedge clk) if(rst_n|auto_rst_n) ShDC_Delay <= SheepDragonCollision; else ShDC_Delay <= 0;
+    always@(posedge  clk) if(rst_n|auto_rst_n) SwDc_Delay <= SwordDragonCollision; else SwDc_Delay <= 0;
     
     wire [9:0]   Dragon_1 ;
     wire [9:0]   Dragon_2 ;
@@ -266,7 +272,7 @@ module tt_um_enjimneering_tts_top (
     DragonBody dragonBody(
 
         .clk( clk),
-        .reset(~rst_n),
+        .reset(~rst_n|~auto_rst_n),
         .heal(SheepDragonCollision),
         .hit(SwordDragonCollision),
         .Dragon_Head({dragon_direction, dragon_position}),
@@ -294,10 +300,9 @@ module tt_um_enjimneering_tts_top (
     // random nuumber generator based on linear feedback + seed
     rng randnum ( 
       .clk(clk),
-      .reset(~rst_n),
-      .trigger(~rst_n | SheepDragonCollision),
-      .seed({timer[5:0],player_pos[7:2]}^Dragon_1), // Seed input for initializing randomness
-      .ready(),
+      .reset(~rst_n|~auto_rst_n),
+      .trigger(~rst_n | SheepDragonCollision |~auto_rst_n),
+      .seed({timer[2:0],player_pos[6:2]}^Dragon_1[7:0]), // Seed input for initializing randomness
       .rdm_num(sheep_pos)
      );
 
@@ -305,7 +310,7 @@ module tt_um_enjimneering_tts_top (
     PictureProcessingUnit ppu (
 
         .clk_in         (clk),
-        .reset          (~rst_n), 
+        .reset          (~rst_n | ~auto_rst_n), 
         .entity_1       ({4'b0000, 2'b00, 8'b1111_0000, {2'b00, playerLives} }),           // heart
         .entity_2       ({player_sprite, player_orientation , player_pos,  4'b0001}),      // player
         .entity_3       ({sword_sprite, sword_orientation, sword_pos, 4'b0001}),           // sword
@@ -337,14 +342,13 @@ module tt_um_enjimneering_tts_top (
     // sync generator unit 
     sync_generator sync_gen (
         .clk( clk),
-        .reset(~rst_n),
+        .reset(~rst_n|~auto_rst_n),
         .hsync(hsync),
         .vsync(vsync),
         .display_on(video_active),
         .screen_hpos(pix_x),
         .screen_vpos(pix_y),
-        .frame_end(frame_end),
-        .input_enable()
+        .frame_end(frame_end)
     );
 
     // outpout colour signals
@@ -355,7 +359,7 @@ module tt_um_enjimneering_tts_top (
     // display logic
     always @(posedge  clk) begin
         
-        if (~rst_n) begin
+        if (~rst_n|~auto_rst_n) begin
         R <= 0;
         G <= 0;
         B <= 0;
@@ -402,12 +406,12 @@ module tt_um_enjimneering_tts_top (
 
     APU_trigger apu_trig (
         .clk(clk),
-        .reset(~rst_n),
-        .frame_end((pix_x == 0) & (pix_y == 0)),     // TODO: use frame end signal here
+        .reset(~rst_n|~auto_rst_n),
+        .frame_end(frame_end),     // TODO: use frame end signal here
         .SheepDragonCollision(SheepDragonCollision),    
         .SwordDragonCollision(SwordDragonCollision),
         .PlayerDragonCollision(PlayerDragonCollision),
-        .test_mode(ui_in[3]),
+        .test_mode(1'b0),
         .eat_sound(trig_eat),
         .die_sound(trig_die),
         .hit_sound(trig_hit)
@@ -415,7 +419,7 @@ module tt_um_enjimneering_tts_top (
     
     AudioProcessingUnit apu (
         .clk(clk),
-        .reset(~rst_n),
+        .reset(~rst_n|~auto_rst_n),
         .saw_trigger(trig_eat),
         .noise_trigger(trig_die),
         .square_trigger(trig_hit),
