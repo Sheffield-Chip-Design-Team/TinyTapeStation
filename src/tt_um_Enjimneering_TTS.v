@@ -17,13 +17,15 @@
 //   `include "DragonHead.v"
 //   `include "DragonBody.v"
 //   `include "DragonTarget.v"
-//   `include "Sheep.v"
 //   `include "Sync.v"
 //   `include "PPU.v"
 //   `include "SpriteROM.v"
 //   `include "APU.v"
-//   `include "APU_trigger.v"
+//   `include "APUTrigger.v"
 //   `include "RNG.v"
+//   `include "InputCollector.v"
+//   `include "NESTest_Top.v"
+//   `include "Oscillator.v"
 //  === END ===
 
 module tt_um_enjimneering_tts_top ( 
