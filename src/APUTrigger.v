@@ -23,9 +23,9 @@ module APU_trigger (
         trigger_buf[0] <= SheepDragonCollision;
         trigger_buf[1] <= SwordDragonCollision;
         trigger_buf[2] <= PlayerDragonCollision;
-        if (frame_delay[1])
+        if (frame_delay[1]) begin
           frame_delay <= 2'b00;
-        else begin
+        end else begin
           frame_delay[0] <= frame_end;
           frame_delay[1] <= frame_delay[0];  //keep sound active two frame, avoid collison happens near the frame end
         end
