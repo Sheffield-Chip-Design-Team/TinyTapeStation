@@ -1,4 +1,7 @@
-// Module : Tiny Tapestation FPGA Interface
+// Module : Tiny Tapestation FPGA Interface (Digilent Nexys A7 / Nexys 4 DDR)
+// Wraps the Tiny Tapeout top level for a 100 MHz board clock, the VGA port, the gamepad
+// PMOD, an NES controller and the audio output. Build: fpga/nexys-a7/README.md
+
 
 module TTS_FPGA_top (
     // System Signals
@@ -29,12 +32,15 @@ module TTS_FPGA_top (
 
     wire R_LO, R_HI, G_LO, G_HI, B_LO, B_HI; // RGB Output Signals (VGA)
     
-    wire [7:0] uio_out_bus;
+    wire [7:0] uio_out_bus;   // driven by the chip: {sound, 0000, nes_latch, nes_clk, 0}
+    wire [7:0] uio_oe_unused; // the chip's output enables: every uio pin is fixed here
     
     wire PWM_ori;
     assign PWM = PWM_ori? 1'b1:1'b0;
 
-    assign uio_out_bus = {PWM_ori,4'b0000, NES_LATCH, NES_CLK, 1'b0};
+    assign PWM_ori   = uio_out_bus[7];
+    assign NES_LATCH = uio_out_bus[2];
+    assign NES_CLK   = uio_out_bus[1];
     
     wire clk;
     clk_wiz_0 clk_div(
@@ -49,8 +55,8 @@ module TTS_FPGA_top (
         .uo_out   ({H_SYNC, B_LO, G_LO, R_LO, V_SYNC, B_HI, G_HI, R_HI}), 
         .uio_in   ({8'b0000_0000}),   
         .uio_out  (uio_out_bus),    
-        .uio_oe   ({8'b0000_0111}),                      
-        .ena      (1),                                   
+        .uio_oe   (uio_oe_unused),
+        .ena      (1'b1),                                   
         .clk      (clk),      
         .rst_n    (RST_N)
     );
