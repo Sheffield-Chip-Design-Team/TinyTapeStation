@@ -1,27 +1,26 @@
+# Editors and OS
 .DS_Store
 .idea
-*.vcd
+venv
+__pycache__/
+
+# Tiny Tapeout / LibreLane local runs
 runs
 tt_submission
 src/user_config.json
 src/config_merged.json
-test/sim_build
-test/__pycache__/
-test/results.xml
-test/gate_level_netlist.v
 gds_render_preview.*
 gds_render.*
-venv
-/.devcontainer
-.devcontainer/copy_tt_support_tools.sh
 /pdk
 /tt
-/.devcontainer
 
-# Simulation logs from test/Makefile and run_tests
+# Tests (test/Makefile, run_tests)
+*.vcd
+test/sim_build
+test/results.xml
+test/gate_level_netlist.v
 test/**/sim/
 test/**/sim_build/
-__pycache__/
 
 # Generated VGA Playground file (scripts/buildsim.py)
 simulation/*.v
