@@ -17,3 +17,8 @@ venv
 /pdk
 /tt
 /.devcontainer
+
+# Simulation logs from test/Makefile and run_tests
+test/**/sim/
+test/**/sim_build/
+__pycache__/
