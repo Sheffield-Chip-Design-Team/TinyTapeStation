@@ -22,3 +22,6 @@ venv
 test/**/sim/
 test/**/sim_build/
 __pycache__/
+
+# Generated VGA Playground file (scripts/buildsim.py)
+simulation/*.v
