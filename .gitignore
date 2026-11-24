@@ -25,3 +25,9 @@ __pycache__/
 
 # Generated VGA Playground file (scripts/buildsim.py)
 simulation/*.v
+
+# Vivado (fpga/)
+fpga/**/build/
+.Xil/
+*.jou
+vivado*.log
